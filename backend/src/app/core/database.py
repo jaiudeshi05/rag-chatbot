@@ -1,5 +1,8 @@
 from typing import Iterator
+
+import app.models
 from sqlmodel import Session, SQLModel, create_engine
+
 from app.core.config import settings
 
 engine = create_engine(

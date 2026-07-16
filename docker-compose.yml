@@ -1,5 +1,4 @@
 services:
-
   backend:
     build:
       context: ./backend
@@ -10,11 +9,12 @@ services:
     ports:
       - "8000:8000"
 
-    volumes:
-      - ./backend:/app
-
     env_file:
       - .env
+
+    volumes:
+      - ./backend:/app
+      - backend_venv:/app/.venv
 
     depends_on:
       - redis
@@ -41,3 +41,4 @@ services:
 
 volumes:
   qdrant_data:
+  backend_venv:

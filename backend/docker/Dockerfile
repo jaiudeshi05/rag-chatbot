@@ -5,19 +5,22 @@ WORKDIR /app
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy dependency files first (better Docker layer caching)
+# Enable bytecode compilation and copy-mode installs
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+
+# Copy dependency files first
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies
-RUN uv sync --frozen --no-dev
+# Install dependencies (cached)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
-# Copy source code
+# Copy project
 COPY . .
 
-# Make src discoverable
+# Make source discoverable
 ENV PYTHONPATH=/app/src
-
-# Use the project's virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

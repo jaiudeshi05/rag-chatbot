@@ -1,9 +1,7 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 from sqlmodel import Field, Relationship
 from app.models.base import BaseModel
-
 if TYPE_CHECKING:
     from app.models.message import Message
     from app.models.project import Project

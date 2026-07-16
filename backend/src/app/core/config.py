@@ -1,10 +1,9 @@
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-ROOT_DIR = Path(__file__).resolve().parents[3]
-
+ROOT_DIR = Path(__file__).resolve().parents[4]
 
 class Settings(BaseSettings):
     # ==========================================
@@ -15,20 +14,21 @@ class Settings(BaseSettings):
     DEBUG: bool
     HOST: str
     PORT: int
+    FRONTEND_URL: str = "http://localhost:3000"
 
     # ==========================================
     # JWT
     # ==========================================
-    JWT_PRIVATE_KEY: str = ""
-    JWT_PUBLIC_KEY: str = ""
+    JWT_PRIVATE_KEY_PATH: str
+    JWT_PUBLIC_KEY_PATH: str
     JWT_ALGORITHM: str
     JWT_EXPIRE_DAYS: int
 
     # ==========================================
     # GOOGLE OAUTH
     # ==========================================
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str
 
     # ==========================================
@@ -81,6 +81,20 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore",
     )
+
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def parse_debug(cls, value: bool | str) -> bool:
+        if isinstance(value, bool):
+            return value
+
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "on", "debug", "development"}:
+            return True
+        if normalized in {"0", "false", "no", "off", "release", "production"}:
+            return False
+
+        return value
 
 
 settings = Settings()
