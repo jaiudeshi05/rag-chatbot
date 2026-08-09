@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function HomePage() {
-  return <div>RAG Chatbot</div>;
+  redirect("/projects");
 }

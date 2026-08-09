@@ -12,6 +12,6 @@ export class AuthService {
   }
 
   static getGoogleLoginUrl(): string {
-    return `${process.env.NEXT_PUBLIC_API_URL}/auth/login`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/auth/google/login`;
   }
 }
